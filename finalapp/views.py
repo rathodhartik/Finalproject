@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
+from finalapp.permission import UserMAnageAuthPermission
 
-from finalapp.serializers import EmailotpverifySerializer, LoginSerializer, MobileSerializer, MobileotpverifySerializer, ProfileSerializer, RegistrationSerializer
+from finalapp.serializers import AdminSerializer, EmailotpverifySerializer, LoginSerializer, MobileSerializer, MobileotpverifySerializer, ProfileSerializer, RegistrationSerializer, UserManageSerializer
 from.models import User
 from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -145,18 +146,12 @@ class MobileNoAdd(APIView):
                 user.otp_expiry_time = exp_time(current_time)
                 user.mobileOtp = otp
                 user.save()
-                # usermobile=UserMobile.objects.create(user_id=user.id,
-                #                                     country_code=data['country_code'],
-                #                                     mobile_number=data['mobile_number'],
-                #                                     otp = user.mobileOtp)   
-                # usermobile.save()
-                # print(usermobile)
+ 
              
                 message = client.messages.create(
-                                        body=f'Hi {user.email} your OTP is{user.mobileOtp}. Thank You.',
-                                        from_=settings.TWILIO_PHONE_NUMBER,
-                                        to=user.country_code+user.mobile_number
-                              )
+                                            body=f'Hi {user.email} your OTP is{user.mobileOtp}. Thank You.',
+                                            from_=settings.TWILIO_PHONE_NUMBER,
+                                            to=user.country_code+user.mobile_number)
                 print(message)
                 return Response(success("Mobile Number Added"),status=OK)
             else:
@@ -164,6 +159,38 @@ class MobileNoAdd(APIView):
         else:
             return Response(validationfail(serializer.errors),status=BAD_REQUEST)
         
+        
+class MobileResendOtp(APIView):
+    permission_classes = [IsAuthenticated,]
+    def get(self,request):
+        user=request.user
+        print(user)
+        time = datetime.now()
+        current_time = time.replace(tzinfo=utc)
+
+        if current_time > user.otp_expiry_time:
+            otp=random_otp(4)
+            print(otp)
+            user.otp_expiry_time =exp_time(current_time)
+            user.mobileOtp = otp
+            user.save()
+            
+    
+    
+            
+            ## Send SMS ##
+            message = client.messages.create(
+                                        body=f'Hi {user.email} your OTP is{user.mobileOtp}. Thank You.',
+                                        from_=settings.TWILIO_PHONE_NUMBER,
+                                        to=user.country_code+user.mobile_number)
+            print(message)
+       
+       
+            return Response(success("OTP Generated."),status=CREATED)
+        else:
+            return Response(fail( "Try again."),status=BAD_REQUEST)
+          
+       
         
         
 class MobileOtpVerify(APIView):                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
@@ -327,7 +354,8 @@ class Profilecreate(APIView):
         else:
             return Response(fail("Data Invalid"),status=BAD_REQUEST)
         
-        
+
+    
         
         
 
@@ -339,3 +367,49 @@ class logout(APIView):
         auth_logout(request)
         return Response(success('Sucessfully logged out'),status=CREATED)
 
+
+
+class Admin_register(APIView):
+    def get(self, request):
+        pro = User.objects.all()
+        serializer = UserManageSerializer(pro, many=True)
+        return Response(serializer.data)
+    
+   
+    def post(self, request):
+        data=request.data
+        serializer = AdminSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            user = User.objects.get(email=serializer.data['email'])
+            token_pair = TokenObtainPairSerializer()
+            refresh = token_pair.get_token(user)
+            access = refresh.access_token
+
+            respose_data = {"code":CREATED,
+                            "data":data,
+                            "access_token":str(access),
+                            "refresh":str(refresh)
+                            }
+            return Response(respose_data,status=CREATED)
+        else:
+            return Response(data_fail("Data Invalid",serializer.errors),status=BAD_REQUEST)
+        
+        
+        
+        
+        
+        
+
+     
+       
+     
+class logincheck(APIView):
+    permission_classes = [IsAuthenticated,UserMAnageAuthPermission]
+    def get(self,request):
+        if request.user.loginVerify:
+             message = (f"Username --> {request.user.email}")
+             return Response(success(message),status=CREATED)
+        else:
+            message="User is not logged in :("
+            return Response(fail(message),status=BAD_REQUEST)

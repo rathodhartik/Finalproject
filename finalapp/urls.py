@@ -22,11 +22,16 @@ urlpatterns = [
     path('EmailResendOtp/', views.EmailResendOtp.as_view(),name='EmailResendOtp'),
     path('EmailOtpVerify/', views.EmailOtpVerify.as_view(),name='EmailOtpVerify'),
     path('MobileNoAdd/', views.MobileNoAdd.as_view(),name='MobileNoAdd'),
+    path('MobileResendOtp/', views.MobileResendOtp.as_view(),name='MobileResendOtp'),
     path('MobileOtpVerify/', views.MobileOtpVerify.as_view(),name='MobileOtpVerify'),
     path('login/', views.login.as_view(),name='login'),
     path('loginOtpVerify/', views.loginOtpVerify.as_view(),name='loginOtpVerify'),
     path('Profile/', views.Profilecreate.as_view(),name='Profilecreate'),
     path('logout/', views.logout.as_view(),name='logout'),
+    
+    
+    path('Admin_register/', views.Admin_register.as_view(),name='Admin_register'),
+    path('logincheck/', views.logincheck.as_view(),name='logincheck'),
     
    
 ]

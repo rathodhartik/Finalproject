@@ -61,7 +61,7 @@ class AdminSerializer(serializers.ModelSerializer):
 class UserManageSerializer(serializers.ModelSerializer):
      class Meta:
         model = User
-        fields = ('id','username','email', 'firstname', 'lastname','age','gender','address','is_enduser','is_grocery','is_active','is_staff','is_superuser')
+        fields = ('id','username','email', 'firstname', 'lastname','age','is_active','is_staff','is_superuser')
         
         
      def update(self, instance, validated_data):
@@ -70,8 +70,6 @@ class UserManageSerializer(serializers.ModelSerializer):
            instance.firstname=validated_data.get('firstname',instance.firstname)
            instance.lastname=validated_data.get('lastname',instance.lastname)
            instance.age=validated_data.get('age',instance.age)
-           instance.gender=validated_data.get('gender',instance.gender)
-           instance.address=validated_data.get('address',instance.address)
            instance.save()
            return instance
             
