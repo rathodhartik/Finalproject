@@ -80,14 +80,7 @@ class EmailResendOtp(APIView):
             email_from = "settings.EMAIL_HOST_USER"
             recipient_list = [user.email, ]
             send_mail( subject, message, email_from, recipient_list )
-            
-            ## Send SMS ##
-            # message = client.messages.create(
-            #                             body=f'Hi {user.email} your OTP is{user.code}. Thank You.',
-            #                             from_=settings.TWILIO_PHONE_NUMBER,
-            #                             to=user.country_code+user.phone_number)
-       
-       
+  
             return Response(success("OTP Generated."),status=CREATED)
         else:
             return Response(fail( "Try again."),status=BAD_REQUEST)
