@@ -33,8 +33,6 @@ class UserManager(BaseUserManager):
         return user
 
 
-
-
 class User(AbstractBaseUser,PermissionsMixin):
 
     username = models.CharField(max_length=255, unique=True)
@@ -77,8 +75,6 @@ class User(AbstractBaseUser,PermissionsMixin):
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ('username',)
-    
-
     
     def __str__(self):
         return self.email

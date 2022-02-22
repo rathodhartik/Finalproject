@@ -70,10 +70,7 @@ class EmailResendOtp(APIView):
             user.otp_expiry_time =exp_time(current_time)
             user.emailOtp = otp
             user.save()
-            
-    
-            
-            
+        
             # Send Mail
             subject = 'welcome to E-Grocery Store'
             message = f'Hi {user.username},your otp is {user.emailOtp}.'
@@ -168,9 +165,6 @@ class MobileResendOtp(APIView):
             user.mobileOtp = otp
             user.save()
             
-    
-    
-            
             ## Send SMS ##
             message = client.messages.create(
                                         body=f'Hi {user.email} your OTP is{user.mobileOtp}. Thank You.',
@@ -183,8 +177,6 @@ class MobileResendOtp(APIView):
         else:
             return Response(fail( "Try again."),status=BAD_REQUEST)
           
-       
-        
         
 class MobileOtpVerify(APIView):                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
     permission_classes = (IsAuthenticated,)
@@ -216,14 +208,7 @@ class MobileOtpVerify(APIView):
             else:
                 return Response(fail("Otp expired"),status=BAD_REQUEST)
         else:
-            return Response(validationfail(serializer.errors),status=BAD_REQUEST)        
-        
-
-        
-        
-        
-
-                         
+            return Response(validationfail(serializer.errors),status=BAD_REQUEST)                    
                                                 
 class login(APIView):
     def post(self,request):
@@ -287,7 +272,6 @@ class login(APIView):
             return Response(validationfail(serializer.errors),status=BAD_REQUEST)
         
         
-        
 class loginOtpVerify(APIView):                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
     permission_classes = (IsAuthenticated,)
     def post(self,request):
@@ -320,9 +304,6 @@ class loginOtpVerify(APIView):
         else:
             return Response(validationfail(serializer.errors),status=BAD_REQUEST)
 
-        
-        
-        
 class Profilecreate(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self,request):
@@ -347,20 +328,12 @@ class Profilecreate(APIView):
         else:
             return Response(fail("Data Invalid"),status=BAD_REQUEST)
         
-
-    
-        
-        
-
-        
 class logout(APIView):
     permission_classes = (IsAuthenticated,)
     
     def post(self, request):
         auth_logout(request)
         return Response(success('Sucessfully logged out'),status=CREATED)
-
-
 
 class Admin_register(APIView):
 
@@ -391,7 +364,6 @@ class AdminViewuser(APIView):
         serializer = UserManageSerializer(pro, many=True)
         return Response(serializer.data)
     
-    
 class Adminuserdelete(APIView):   
     permission_classes = [IsAuthenticated,UserMAnageAuthPermission]
     
@@ -405,8 +377,3 @@ class Adminuserdelete(APIView):
         stu = self.get_object(pk)
         stu.delete()
         return Response(deleted_data("User successfully deleted"),status=NO_CONTENT)
-    
-  
-    
-       
-     
