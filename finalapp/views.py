@@ -13,7 +13,7 @@ from django.contrib.auth import authenticate,login as auth_login ,logout as auth
 from django.core.mail import send_mail
 from django.conf import settings
 
-
+from django.http import Http404
 
 class register(APIView):
     def post(self,request):
@@ -397,22 +397,23 @@ class AdminViewuser(APIView):
         pro = User.objects.all()
         serializer = UserManageSerializer(pro, many=True)
         return Response(serializer.data)
-        
-        
-        
-        
-        
-        
+    
+    
+class Adminuserdelete(APIView):   
+    permission_classes = [IsAuthenticated,UserMAnageAuthPermission]
+    
+    def get_object(self, pk):
+        try:
+            return User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise Http404
 
-     
+    def delete(self, request, pk,):
+        stu = self.get_object(pk)
+        stu.delete()
+        return Response(deleted_data("User successfully deleted"),status=NO_CONTENT)
+    
+  
+    
        
      
-class logincheck(APIView):
-    permission_classes = [IsAuthenticated,UserMAnageAuthPermission]
-    def get(self,request):
-        if request.user.loginVerify:
-             message = (f"{request.user.email}")
-             return Response(success(message),status=CREATED)
-        else:
-            message="User is not logged in "
-            return Response(fail(message),status=BAD_REQUEST)

@@ -93,7 +93,6 @@ class ProfileSerializer(serializers.ModelSerializer):
       instance.firstname=validated_data.get('firstname',instance.firstname)
       instance.lastname=validated_data.get('lastname',instance.lastname)
       instance.age=validated_data.get('age',instance.age)
-    #   instance.profile_image=validated_data.get('profile_image',instance.profile_image)
       instance.city=validated_data.get('city',instance.city)
       instance.state=validated_data.get('state',instance.state)
       instance.country=validated_data.get('country',instance.country)
