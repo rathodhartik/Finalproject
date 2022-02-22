@@ -408,8 +408,8 @@ class logincheck(APIView):
     permission_classes = [IsAuthenticated,UserMAnageAuthPermission]
     def get(self,request):
         if request.user.loginVerify:
-             message = (f"Username --> {request.user.email}")
+             message = (f"{request.user.email}")
              return Response(success(message),status=CREATED)
         else:
-            message="User is not logged in :("
+            message="User is not logged in "
             return Response(fail(message),status=BAD_REQUEST)
