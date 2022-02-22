@@ -2,7 +2,7 @@ django==3.2.9
 djangorestframework
 djangorestframework-simplejwt
 gunicorn==20.0.4
-stripe
+twilio
 decouple
 
 

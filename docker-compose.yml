@@ -2,11 +2,14 @@ version: '3'
 
 services:
   myservices:
-       build: .
+      build: .
+
+      env_file:
+      - .env
        #command: gunicorn project.wsgi:application --bind 0.0.0.0:8000
-       volumes:
+      volumes:
         - .:/code
-       expose:
+      expose:
         - "8000"
        
 
@@ -18,10 +21,18 @@ services:
 
       volumes:
        - ./nginx:/etc/nginx/conf.d
-       -  static:/static
-      
+
       depends_on:
        - myservices
+
+  db:
+    image: 'postgres:latest'
+    
+
+    environment:
+      POSTGRES_USER: admin 
+      POSTGRES_PASSWORD: Demo@123 
+      POSTGRES_DB: final
    
 
    
@@ -29,11 +40,6 @@ services:
    
 
    
-
-volumes:
-   static:
-
-
 
 
 

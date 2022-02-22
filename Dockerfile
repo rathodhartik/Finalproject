@@ -1,6 +1,6 @@
 FROM python:3
 
-RUN mkdir /static
+
 
 RUN pip3 install --upgrade pip
 

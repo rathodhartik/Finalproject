@@ -24,17 +24,11 @@ NOT_FOUND = status.HTTP_404_NOT_FOUND
 
 
 
-
-
 def success(message):
    
     msg={"code":CREATED,
         "message":message}
     return msg
-
-
-
-
 
 def login_success(message,data,access,refresh):
      user_data={
@@ -49,8 +43,6 @@ def data_fail(message,data):
          "message":message,
          "data":data}
     return msg
-
-
 
 def validationfail(data):
     fail = {"code":BAD_REQUEST,
@@ -96,9 +88,6 @@ def not_found(message):
     return msg
 
 
-
-
-
 ## Date time
 
 import pytz
@@ -111,21 +100,7 @@ def exp_time(now):
     return expired
 
 
-## OTP
-
-# def random_otp() :
- 
-#     digits = "0123456789"
-#     OTP = ""
-#     for i in range(4) :
-#         OTP += digits[math.floor(random.random() * 10)]
- 
-#     return OTP
-
-
 def random_otp(n):
     range_start = 10**(n-1)
     range_end = (10**n)-1
     return randint(range_start, range_end)
-
-

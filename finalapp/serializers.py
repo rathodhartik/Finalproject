@@ -2,8 +2,6 @@ from .models import User
 from rest_framework import serializers
 
 
-
-
 """ User Registration"""
 class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
