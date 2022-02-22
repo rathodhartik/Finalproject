@@ -61,7 +61,7 @@ class AdminSerializer(serializers.ModelSerializer):
 class UserManageSerializer(serializers.ModelSerializer):
      class Meta:
         model = User
-        fields = ('id','username','email', 'firstname', 'lastname','age','is_active','is_staff','is_superuser')
+        fields = ('id','username','email', 'firstname', 'lastname','age','emailVerify','mobileVerify','loginVerify','is_active','is_staff','is_superuser')
         
         
      def update(self, instance, validated_data):

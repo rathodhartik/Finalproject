@@ -370,12 +370,7 @@ class logout(APIView):
 
 
 class Admin_register(APIView):
-    def get(self, request):
-        pro = User.objects.all()
-        serializer = UserManageSerializer(pro, many=True)
-        return Response(serializer.data)
-    
-   
+
     def post(self, request):
         data=request.data
         serializer = AdminSerializer(data=data)
@@ -394,6 +389,14 @@ class Admin_register(APIView):
             return Response(respose_data,status=CREATED)
         else:
             return Response(data_fail("Data Invalid",serializer.errors),status=BAD_REQUEST)
+        
+        
+class AdminViewuser(APIView):   
+    permission_classes = [IsAuthenticated,UserMAnageAuthPermission]
+    def get(self, request):
+        pro = User.objects.all()
+        serializer = UserManageSerializer(pro, many=True)
+        return Response(serializer.data)
         
         
         

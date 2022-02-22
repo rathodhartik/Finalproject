@@ -31,6 +31,7 @@ urlpatterns = [
     
     
     path('Admin_register/', views.Admin_register.as_view(),name='Admin_register'),
+    path('AdminViewuser/', views.AdminViewuser.as_view(),name='AdminViewuser'),
     path('logincheck/', views.logincheck.as_view(),name='logincheck'),
     
    
