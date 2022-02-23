@@ -29,7 +29,6 @@ urlpatterns = [
     path('Profile/', views.Profilecreate.as_view(),name='Profilecreate'),
     path('logout/', views.logout.as_view(),name='logout'),
     
-    
     path('Admin_register/', views.Admin_register.as_view(),name='Admin_register'),
     path('AdminViewuser/', views.AdminViewuser.as_view(),name='AdminViewuser'),
     path('AdminViewuser/<int:pk>/', views.Adminuserdelete.as_view(),name='Adminuserdelete'),

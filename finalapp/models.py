@@ -3,8 +3,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,PermissionsMixin,BaseUserManager
 from django.utils import timezone
 
-
-
 class UserManager(BaseUserManager):
     def _create_user(self, email, password,is_staff,is_superuser, **extra_fields):
         if not email:
@@ -32,14 +30,11 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-
 class User(AbstractBaseUser,PermissionsMixin):
-
     username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(unique=True)
     mobile_number = models.CharField(max_length=10)
     country_code=models.CharField(max_length=4,null=True)
-    
     firstname=models.CharField(max_length=100,null=True)
     lastname=models.CharField(max_length=100,null=True,)
     age=models.IntegerField(null=True) 
@@ -70,13 +65,15 @@ class User(AbstractBaseUser,PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     
-    
     objects = UserManager()
-    
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ('username',)
     
     def __str__(self):
         return self.email
     
+class session_store(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    session_start = models.DateTimeField(auto_now_add=True)
+    session_end = models.DateTimeField(auto_now_add=True)
     

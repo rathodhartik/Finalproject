@@ -1,19 +1,17 @@
-from django.shortcuts import render
-from rest_framework.views import APIView
-from finalapp.permission import UserMAnageAuthPermission
-
-from finalapp.serializers import AdminSerializer, EmailotpverifySerializer, LoginSerializer, MobileSerializer, MobileotpverifySerializer, ProfileSerializer, RegistrationSerializer, UserManageSerializer
 from.models import User
-from rest_framework.response import Response
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework.permissions import IsAuthenticated
 from .utilities import *
 from datetime import datetime
-from django.contrib.auth import authenticate,login as auth_login ,logout as auth_logout
-from django.core.mail import send_mail
-from django.conf import settings
-
 from django.http import Http404
+from django.conf import settings
+from django.core.mail import send_mail
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from finalapp.permission import UserMAnageAuthPermission
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth import authenticate,login as auth_login ,logout as auth_logout
+from finalapp.serializers import AdminSerializer, EmailotpverifySerializer, LoginSerializer, MobileSerializer, MobileotpverifySerializer, ProfileSerializer, RegistrationSerializer, UserManageSerializer
+
 
 class register(APIView):
     def post(self,request):
@@ -21,9 +19,7 @@ class register(APIView):
         serializer = RegistrationSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-
             user = User.objects.get(email=serializer.data['email'])
-            
             otp=random_otp(4)
             time = datetime.now()
             current_time = time.replace(tzinfo=utc)
@@ -32,29 +28,18 @@ class register(APIView):
             if user:
                 if user.is_twofactor==True:
 
-                 
-                    subject = 'welcome to E-Grocery Store'
-                    message = f'Hi {user.username}, thank you for registering in E-Grocery Store.Your OTP is {user.emailOtp}.'
+                    subject = 'welcome'
+                    message = f'Hi {user.username}, thank you for registering.Your OTP is {user.emailOtp}.'
                     email_from = settings.EMAIL_HOST_USER
                     recipient_list = [user.email, ]
                     send_mail( subject, message, email_from, recipient_list )
                     user.save() 
-
             token_pair = TokenObtainPairSerializer()
             refresh = token_pair.get_token(user)
             access = refresh.access_token
-
-            respose_data = {"code":CREATED,
-                            "data":data,
-                            "access_token":str(access),
-                            "refresh":str(refresh)
-                            }
-
-            return Response(respose_data,status=CREATED)
+            return Response(success("Register successfully",data,str(access),str(refresh)),status=CREATED)
         else:
            return Response(data_fail("Data Invalid",serializer.errors),status=BAD_REQUEST)
-       
-       
        
 class EmailResendOtp(APIView):
     permission_classes = [IsAuthenticated,]
@@ -72,18 +57,15 @@ class EmailResendOtp(APIView):
             user.save()
         
             # Send Mail
-            subject = 'welcome to E-Grocery Store'
+            subject = 'welcome'
             message = f'Hi {user.username},your otp is {user.emailOtp}.'
             email_from = "settings.EMAIL_HOST_USER"
             recipient_list = [user.email, ]
             send_mail( subject, message, email_from, recipient_list )
-  
             return Response(success("OTP Generated."),status=CREATED)
         else:
             return Response(fail( "Try again."),status=BAD_REQUEST)
           
-       
-       
 class EmailOtpVerify(APIView):                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
     permission_classes = (IsAuthenticated,)
     def post(self,request):
@@ -100,10 +82,9 @@ class EmailOtpVerify(APIView):
                     user.emailVerify = True
                     user.emailOtp = None
                     user.save()
-            
                         
-                    subject = 'welcome to E-Grocery Store'
-                    message = f'Hi {user.username}, thank you for registering in E-Grocery Store your OTP is verify.'
+                    subject = 'welcome'
+                    message = f'Hi {user.username}, thank you for registering your OTP is verify.'
                     email_from = settings.EMAIL_HOST_USER
                     recipient_list = [user.email, ]
                     send_mail( subject, message, email_from, recipient_list )
@@ -137,7 +118,6 @@ class MobileNoAdd(APIView):
                 user.mobileOtp = otp
                 user.save()
  
-             
                 message = client.messages.create(
                                             body=f'Hi {user.email} your OTP is{user.mobileOtp}. Thank You.',
                                             from_=settings.TWILIO_PHONE_NUMBER,
@@ -148,7 +128,6 @@ class MobileNoAdd(APIView):
                 return Response(fail("Email is not verified"),status=BAD_REQUEST)
         else:
             return Response(validationfail(serializer.errors),status=BAD_REQUEST)
-        
         
 class MobileResendOtp(APIView):
     permission_classes = [IsAuthenticated,]
@@ -164,15 +143,12 @@ class MobileResendOtp(APIView):
             user.otp_expiry_time =exp_time(current_time)
             user.mobileOtp = otp
             user.save()
-            
             ## Send SMS ##
             message = client.messages.create(
                                         body=f'Hi {user.email} your OTP is{user.mobileOtp}. Thank You.',
                                         from_=settings.TWILIO_PHONE_NUMBER,
                                         to=user.country_code+user.mobile_number)
             print(message)
-       
-       
             return Response(success("OTP Generated."),status=CREATED)
         else:
             return Response(fail( "Try again."),status=BAD_REQUEST)
@@ -198,8 +174,7 @@ class MobileOtpVerify(APIView):
                     message = client.messages.create(
                                         body=f'Hi {user.email} your OTP is verify. Thank You.',
                                         from_=settings.TWILIO_PHONE_NUMBER,
-                                        to=user.country_code+user.mobile_number
-                              )
+                                        to=user.country_code+user.mobile_number)
                     print(message)
                     user.save() 
                     return Response(success_data("OTP varified",data),status=OK)
@@ -238,8 +213,8 @@ class login(APIView):
                                             to=user.country_code+user.mobile_number)
                     print(message)
                     
-                    subject = 'welcome to E-Grocery Store'
-                    message = f'Hi {user.username}, thank you for registering in E-Grocery Store.Your OTP is {user.emailOtp}.'
+                    subject = 'welcome'
+                    message = f'Hi {user.username}, thank you for Login.Your OTP is {user.emailOtp}.'
                     email_from = settings.EMAIL_HOST_USER
                     recipient_list = [user.email, ]
                     send_mail( subject, message, email_from, recipient_list )
@@ -251,26 +226,18 @@ class login(APIView):
                     user.emailOtp = otp
                     user.save()
                     
-                    subject = 'welcome to E-Grocery Store'
-                    message = f'Hi {user.username}, thank you for registering in E-Grocery Store.Your OTP is {user.emailOtp}.'
+                    subject = 'welcome '
+                    message = f'Hi {user.username}, thank you for Login.Your OTP is {user.emailOtp}.'
                     email_from = settings.EMAIL_HOST_USER
                     recipient_list = [user.email, ]
                     send_mail( subject, message, email_from, recipient_list )
-                    
                 auth_login(request,user)
                 data = serializer.data
-                respose_data = {"code":OK,
-                                "access_token":str(access),
-                                "refresh":str(refresh),
-                                "data":data,    
-                                "message":"Login SuccessFull!!",
-                                }
-                return Response(respose_data,OK)
+                return Response(success("Login successfully",data,str(access),str(refresh)),status=CREATED)
             else:
                 return Response(fail("Invalid User"),status=BAD_REQUEST)
         else:
             return Response(validationfail(serializer.errors),status=BAD_REQUEST)
-        
         
 class loginOtpVerify(APIView):                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
     permission_classes = (IsAuthenticated,)
@@ -288,15 +255,13 @@ class loginOtpVerify(APIView):
                     user.loginVerify= True   
                     user.save()
                    
-                    subject = 'welcome to E-Grocery Store'
-                    message = f'Hi {user.username}, thank you for registering in E-Grocery Store your OTP is verify.'
+                    subject = 'welcome'
+                    message = f'Hi {user.username}, thank you for Login your OTP is verify.'
                     email_from = settings.EMAIL_HOST_USER
                     recipient_list = [user.email, ]
-                    
                     send_mail( subject, message, email_from, recipient_list )
                     user.save() 
                     return Response(success_data("OTP varified",data),status=OK)
-              
                 else:
                     return Response(data_fail("Invalid OTP",data),status=BAD_REQUEST)
             else:
@@ -346,16 +311,9 @@ class Admin_register(APIView):
             token_pair = TokenObtainPairSerializer()
             refresh = token_pair.get_token(user)
             access = refresh.access_token
-
-            respose_data = {"code":CREATED,
-                            "data":data,
-                            "access_token":str(access),
-                            "refresh":str(refresh)
-                            }
-            return Response(respose_data,status=CREATED)
+            return Response(success("Register successfully",data,str(access),str(refresh)),status=CREATED)
         else:
             return Response(data_fail("Data Invalid",serializer.errors),status=BAD_REQUEST)
-        
         
 class AdminViewuser(APIView):   
     permission_classes = [IsAuthenticated,UserMAnageAuthPermission]

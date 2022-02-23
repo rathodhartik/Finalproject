@@ -42,9 +42,6 @@ class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('email','password',)
-
-
-
           
 """ Admin Registration"""
 class AdminSerializer(serializers.ModelSerializer):
@@ -61,7 +58,6 @@ class UserManageSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id','username','email', 'firstname', 'lastname','age','emailVerify','mobileVerify','loginVerify','is_active','is_staff','is_superuser')
         
-        
      def update(self, instance, validated_data):
            instance.username=validated_data.get('username',instance.username)
            instance.email=validated_data.get('email',instance.email)
@@ -71,7 +67,6 @@ class UserManageSerializer(serializers.ModelSerializer):
            instance.save()
            return instance
             
-
 """ ProfileSerializer """
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -85,8 +80,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         if firstname == lastname:
             raise serializers.ValidationError({"lastname": ["FirstName and LastName shouldn't be same."]})
     
-
-    
     def update(self, instance, validated_data):
       instance.firstname=validated_data.get('firstname',instance.firstname)
       instance.lastname=validated_data.get('lastname',instance.lastname)
@@ -98,5 +91,3 @@ class ProfileSerializer(serializers.ModelSerializer):
       instance.hobbies=validated_data.get('hobbies',instance.hobbies)
       instance.save()
       return instance
-
-        

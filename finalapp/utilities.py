@@ -15,13 +15,11 @@ auth_token = settings.TWILIO_AUTH_TOKEN
 client = Client(account_sid, auth_token)
 
 
-
 OK = status.HTTP_200_OK
 CREATED = status.HTTP_201_CREATED
 BAD_REQUEST =status.HTTP_400_BAD_REQUEST
 NO_CONTENT =status.HTTP_204_NO_CONTENT
 NOT_FOUND = status.HTTP_404_NOT_FOUND
-
 
 
 def success(message):
@@ -30,7 +28,7 @@ def success(message):
         "message":message}
     return msg
 
-def login_success(message,data,access,refresh):
+def success(message,data,access,refresh):
      user_data={
         "user":data,
         "access_token":access,
@@ -71,7 +69,6 @@ def deleted_data(message):
              "message":message,}
     return msg
 
-
 def success_mount(message,data,amount,quantity):
      user_data={
         "user":data,
@@ -79,8 +76,7 @@ def success_mount(message,data,amount,quantity):
         "total_quantity":quantity,}
      msg={"code":CREATED,"message":message,"data":user_data}
      return msg
-
-
+ 
 def not_found(message):
    
     msg={"code":NOT_FOUND,
@@ -99,7 +95,7 @@ def exp_time(now):
     expired = now+datetime.timedelta(seconds=60)
     return expired
 
-
+# OTP
 def random_otp(n):
     range_start = 10**(n-1)
     range_end = (10**n)-1
