@@ -72,8 +72,20 @@ class User(AbstractBaseUser,PermissionsMixin):
     def __str__(self):
         return self.email
     
-class session_store(models.Model):
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
-    session_start = models.DateTimeField(auto_now_add=True)
-    session_end = models.DateTimeField(auto_now_add=True)
+
+
+    
+    
+class SessionDetail(models.Model):
+    Device_Choice = (
+    ('android','android'),
+    ('ios','ios'),
+    ('unknown','unknown'))
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    device = models.CharField(choices=Device_Choice,max_length=45,default="unknown")
+    device_token = models.TextField(null=True)
+    device_id = models.TextField()
+    createdAt = models.DateField(auto_now_add=True)
+    updatedAt = models.DateField(auto_now=True)
+
     

@@ -45,13 +45,11 @@ class EmailResendOtp(APIView):
     permission_classes = [IsAuthenticated,]
     def get(self,request):
         user=request.user
-        print(user)
         time = datetime.now()
         current_time = time.replace(tzinfo=utc)
 
         if current_time > user.otp_expiry_time:
             otp=random_otp(4)
-            print(otp)
             user.otp_expiry_time =exp_time(current_time)
             user.emailOtp = otp
             user.save()
@@ -62,15 +60,14 @@ class EmailResendOtp(APIView):
             email_from = "settings.EMAIL_HOST_USER"
             recipient_list = [user.email, ]
             send_mail( subject, message, email_from, recipient_list )
-            return Response(success("OTP Generated."),status=CREATED)
+            return Response(msg("OTP Generated."),status=CREATED)
         else:
-            return Response(fail( "Try again."),status=BAD_REQUEST)
+            return Response(fail("Try again."),status=BAD_REQUEST)
           
 class EmailOtpVerify(APIView):                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
     permission_classes = (IsAuthenticated,)
     def post(self,request):
         user = request.user
-        print(user)
         data = request.data
         emailOtp = data['emailOtp']
         time = datetime.now()
@@ -102,7 +99,6 @@ class MobileNoAdd(APIView):
     permission_classes = (IsAuthenticated,)
     def post(self,request):
         user = request.user
-        print(user)
         data = request.data
         serializer = MobileSerializer(user,data=data)
         if serializer.is_valid():
@@ -122,8 +118,7 @@ class MobileNoAdd(APIView):
                                             body=f'Hi {user.email} your OTP is{user.mobileOtp}. Thank You.',
                                             from_=settings.TWILIO_PHONE_NUMBER,
                                             to=user.country_code+user.mobile_number)
-                print(message)
-                return Response(success("Mobile Number Added"),status=OK)
+                return Response(msg("Mobile Number Added"),status=OK)
             else:
                 return Response(fail("Email is not verified"),status=BAD_REQUEST)
         else:
@@ -133,13 +128,12 @@ class MobileResendOtp(APIView):
     permission_classes = [IsAuthenticated,]
     def get(self,request):
         user=request.user
-        print(user)
         time = datetime.now()
         current_time = time.replace(tzinfo=utc)
 
         if current_time > user.otp_expiry_time:
             otp=random_otp(4)
-            print(otp)
+
             user.otp_expiry_time =exp_time(current_time)
             user.mobileOtp = otp
             user.save()
@@ -148,8 +142,7 @@ class MobileResendOtp(APIView):
                                         body=f'Hi {user.email} your OTP is{user.mobileOtp}. Thank You.',
                                         from_=settings.TWILIO_PHONE_NUMBER,
                                         to=user.country_code+user.mobile_number)
-            print(message)
-            return Response(success("OTP Generated."),status=CREATED)
+            return Response(msg("OTP Generated."),status=CREATED)
         else:
             return Response(fail( "Try again."),status=BAD_REQUEST)
           
@@ -158,7 +151,6 @@ class MobileOtpVerify(APIView):
     permission_classes = (IsAuthenticated,)
     def post(self,request):
         user = request.user
-        print(user)
         data = request.data
         mobileOtp = data['mobileOtp']
         time = datetime.now()
@@ -175,7 +167,6 @@ class MobileOtpVerify(APIView):
                                         body=f'Hi {user.email} your OTP is verify. Thank You.',
                                         from_=settings.TWILIO_PHONE_NUMBER,
                                         to=user.country_code+user.mobile_number)
-                    print(message)
                     user.save() 
                     return Response(success_data("OTP varified",data),status=OK)
                 else:
@@ -193,7 +184,6 @@ class login(APIView):
             email = serializer.data['email']
             password = serializer.data['password']
             user = authenticate(email=email, password=password)
-            print(user)
             if user:
                 token_pair = TokenObtainPairSerializer()
                 refresh = token_pair.get_token(user)
@@ -211,8 +201,7 @@ class login(APIView):
                                             body=f'Hi {user.email} your OTP is{user.mobileOtp}. Thank You.',
                                             from_=settings.TWILIO_PHONE_NUMBER,
                                             to=user.country_code+user.mobile_number)
-                    print(message)
-                    
+                    # send mail
                     subject = 'welcome'
                     message = f'Hi {user.username}, thank you for Login.Your OTP is {user.emailOtp}.'
                     email_from = settings.EMAIL_HOST_USER
@@ -298,7 +287,7 @@ class logout(APIView):
     
     def post(self, request):
         auth_logout(request)
-        return Response(success('Sucessfully logged out'),status=CREATED)
+        return Response(msg('Sucessfully logged out'),status=CREATED)
 
 class Admin_register(APIView):
 
@@ -324,7 +313,6 @@ class AdminViewuser(APIView):
     
 class Adminuserdelete(APIView):   
     permission_classes = [IsAuthenticated,UserMAnageAuthPermission]
-    
     def get_object(self, pk):
         try:
             return User.objects.get(pk=pk)

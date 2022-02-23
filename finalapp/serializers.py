@@ -71,7 +71,7 @@ class UserManageSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
       model = User
-      fields=('firstname', 'lastname', 'age','city','state','country','profession','hobbies')
+      fields=('firstname', 'lastname', 'age','city','state','country','profession','hobbies','profile_image')
       
     def validated(self, data):
         firstname =  data.get('firstname')
@@ -89,5 +89,6 @@ class ProfileSerializer(serializers.ModelSerializer):
       instance.country=validated_data.get('country',instance.country)
       instance.profession=validated_data.get('profession',instance.profession)
       instance.hobbies=validated_data.get('hobbies',instance.hobbies)
+      instance.profile_image=validated_data.get('profile_image',instance.profile_image)
       instance.save()
       return instance

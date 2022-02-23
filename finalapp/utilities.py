@@ -22,7 +22,7 @@ NO_CONTENT =status.HTTP_204_NO_CONTENT
 NOT_FOUND = status.HTTP_404_NOT_FOUND
 
 
-def success(message):
+def msg(message):
    
     msg={"code":CREATED,
         "message":message}
@@ -100,3 +100,8 @@ def random_otp(n):
     range_start = 10**(n-1)
     range_end = (10**n)-1
     return randint(range_start, range_end)
+
+
+def validate_headers(device, device_id):
+    if not device or not device_id:
+        return "fail"
